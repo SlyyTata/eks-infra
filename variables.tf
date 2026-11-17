@@ -51,7 +51,7 @@ variable "priv_subnet_cidr_block_2" {
 }
 
 
-# ---------- App CD (GitHub Actions OIDC) ----------
+# for github action OIDC
 variable "github_app_repo" {
   description = "owner/repo whose CD workflow may deploy new images to the ECS services"
   type        = string

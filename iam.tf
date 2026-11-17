@@ -15,7 +15,18 @@ resource "aws_iam_role" "app_deploy" {
       Condition = {
         StringEquals = {
           "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
-          "token.actions.githubusercontent.com:sub" = "repo:${var.github_app_repo}:ref:refs/heads/${var.github_app_branch}"
+        }
+        # GitHub may send the sub claim with numeric owner/repo IDs:
+        #   repo:SlyyTata@286616894/eks-deployment@1460239614:ref:refs/heads/main
+        # instead of the plain form:
+        #   repo:SlyyTata/eks-deployment:ref:refs/heads/main
+        # Accept both. Usernames and repo names can't contain "@" or "/",
+        # so the wildcards only ever match the ID, never another owner or repo.
+        StringLike = {
+          "token.actions.githubusercontent.com:sub" = [
+            "repo:${var.github_app_repo}:ref:refs/heads/${var.github_app_branch}",
+            "repo:${split("/", var.github_app_repo)[0]}@*/${split("/", var.github_app_repo)[1]}@*:ref:refs/heads/${var.github_app_branch}",
+          ]
         }
       }
     }]
