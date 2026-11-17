@@ -30,7 +30,7 @@ jobs:
           fetch-depth: 0              # full history, so the secret scan sees every commit
           persist-credentials: false  # don't leave the GitHub token on disk
 
-      # Passwords, keys or tokens committed anywhere in the git history
+      # Passwords, keys or tokens committed anywhere in the git and history
       - name: Secret scan (Gitleaks)
         run: |
           docker run --rm -v "$GITHUB_WORKSPACE":/repo zricethezav/gitleaks:v8.30.1 \
